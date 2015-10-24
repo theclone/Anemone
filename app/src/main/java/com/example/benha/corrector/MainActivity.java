@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
-
+        SpeechRecognizer.createSpeechRecognizer(MainActivity.this.getApplicationContext());
         setSupportActionBar(toolbar);
         startMic();
 
@@ -58,7 +58,6 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
 
 
-                SpeechRecognizer.createSpeechRecognizer(MainActivity.this.getApplicationContext());
                 Log.d("Available:", SpeechRecognizer.isRecognitionAvailable(MainActivity.this) + " ");
                 Log.d("TrueorFalse", SpeechRecognizer.isRecognitionAvailable(MainActivity.this) + " ");
             }
