@@ -13,7 +13,7 @@ public class ToSpeech extends TextToSpeech {
 
     private static ToSpeech instance;
     private static final String TAG = "ToSpeech";
-    public ArrayList<String> toSpeak = new ArrayList<String>();
+    public ArrayList<String> toSpeak = new ArrayList<>();
 
     private ToSpeech (Context context) {
         super(context, new TextToSpeech.OnInitListener() {
@@ -32,7 +32,7 @@ public class ToSpeech extends TextToSpeech {
     public void speak() {
         for (String word: toSpeak) {
             speak(word, QUEUE_ADD, null);
-
+            toSpeak.remove(0);
         }
     }
 
