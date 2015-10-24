@@ -84,7 +84,8 @@ public class ToSpeech extends TextToSpeech implements OnDolbyAudioProcessingEven
 
     @Override
     public void onDolbyAudioProcessingEnabled(boolean b) {
-
+        if (b)
+            Log.d("Dolby","on");
     }
 
     @Override
