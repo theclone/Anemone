@@ -79,7 +79,7 @@ public class RecognitionFragment extends Fragment implements RecognitionListener
                             Log.d("Tag", "start listening");
                             speechRecognizer.setRecognitionListener(RecognitionFragment.this);
                             speechRecognizer.startListening(recognizerIntent);
-                        };
+                        }
                         changeBarHeight(0.7f);
                         changeLayout(false);
                         break;
@@ -189,7 +189,8 @@ public class RecognitionFragment extends Fragment implements RecognitionListener
         ArrayList<String> strings = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
         ToSpeech.getInstance().toSpeak.addAll(strings);
         speechResult = "";
-        speechResult = strings.get(0);
+        if (!strings.isEmpty())
+            speechResult = strings.get(0);
         /*
         for(String s : strings) {
             speechResult = speechResult + s + " ";
@@ -197,7 +198,7 @@ public class RecognitionFragment extends Fragment implements RecognitionListener
         speechResult = speechResult.trim();
         resultTextView.setText(speechResult);
         Log.d("TAG", "on result");
-
+        ToSpeech.getInstance().speak(100);
     }
 
     @Override

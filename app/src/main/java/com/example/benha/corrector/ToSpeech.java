@@ -1,18 +1,18 @@
 package com.example.benha.corrector;
 
-import android.app.Activity;
 import android.content.Context;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 import android.util.Log;
-import android.view.View;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
-public class ToSpeech extends TextToSpeech {
+import com.dolby.dap.*;
+
+public class ToSpeech extends TextToSpeech implements OnDolbyAudioProcessingEventListener{
 
     private static ToSpeech instance;
+    private static DolbyAudioProcessing dap;
     private static final String TAG = "ToSpeech";
     public ArrayList<String> toSpeak = new ArrayList<>();
 
@@ -28,7 +28,14 @@ public class ToSpeech extends TextToSpeech {
 
     // establish Context to instantiate text to speech
     public static void init(Context context) {
+        dap = DolbyAudioProcessing.getDolbyAudioProcessing(context, DolbyAudioProcessing.PROFILE.VOICE, instance);
+        dap.setEnabled(true);
         instance = new ToSpeech(context);
+    }
+
+    public static void release() {
+        instance = null;
+        dap.release();
     }
 
     // loops through the toSpeak queue, speaking each String with a delay in milliseconds
@@ -63,5 +70,25 @@ public class ToSpeech extends TextToSpeech {
     // to access instance of class
     public static ToSpeech getInstance() {
         return instance;
+    }
+
+    @Override
+    public void onDolbyAudioProcessingClientConnected() {
+
+    }
+
+    @Override
+    public void onDolbyAudioProcessingClientDisconnected() {
+
+    }
+
+    @Override
+    public void onDolbyAudioProcessingEnabled(boolean b) {
+
+    }
+
+    @Override
+    public void onDolbyAudioProcessingProfileSelected(DolbyAudioProcessing.PROFILE profile) {
+
     }
 }
