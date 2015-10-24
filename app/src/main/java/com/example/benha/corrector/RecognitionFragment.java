@@ -187,6 +187,7 @@ public class RecognitionFragment extends Fragment implements RecognitionListener
     @Override
     public void onResults(Bundle results) {
         ArrayList<String> strings = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
+        ToSpeech.getInstance().toSpeak.addAll(strings);
         speechResult = "";
         speechResult = strings.get(0);
         /*
