@@ -228,8 +228,6 @@ public class RecognitionFragment extends Fragment implements RecognitionListener
     @Override
     public void onResults(Bundle results) {
         ArrayList<String> strings = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
-        float[] confidence = results.getFloatArray(SpeechRecognizer.CONFIDENCE_SCORES);
-
         speechResult = "";
         speechResult = strings.get(0);
         /*
