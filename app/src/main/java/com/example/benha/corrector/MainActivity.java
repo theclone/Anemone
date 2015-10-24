@@ -1,6 +1,8 @@
 package com.example.benha.corrector;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -20,9 +22,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
-        SpeechRecognizer.createSpeechRecognizer(MainActivity.this.getApplicationContext());
-        setSupportActionBar(toolbar);
+        SpeechRecognizer.createSpeechRecognizer(MainActivity.this);
         startMic();
+
+
+        setSupportActionBar(toolbar);
+
 
 
     }
@@ -57,9 +62,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
+                Intent i = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
 
+                SpeechRecognizer speechRecognizer = SpeechRecognizer.createSpeechRecognizer(MainActivity.this.getApplicationContext());
                 Log.d("Available:", SpeechRecognizer.isRecognitionAvailable(MainActivity.this) + " ");
-                Log.d("TrueorFalse", SpeechRecognizer.isRecognitionAvailable(MainActivity.this) + " ");
+                if (SpeechRecognizer.isRecognitionAvailable(MainActivity.this) == true) {
+                    SpeechRecognizer.startListening(i);
+                }
+
             }
 
         });
