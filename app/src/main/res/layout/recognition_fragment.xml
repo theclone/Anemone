@@ -10,6 +10,7 @@
     <RelativeLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
+        android:layout_marginLeft="10dp"
         android:layout_weight="1" >
 
         <TextView
@@ -34,7 +35,7 @@
             android:layout_alignParentTop="true"
 
             android:layout_above="@+id/editText"
-            android:textSize="20sp"
+            android:textSize="24sp"
             android:textColor="@android:color/white"
             android:text="Bla bla bla"/>
 
@@ -43,8 +44,8 @@
             android:layout_centerInParent="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_toLeftOf="@+id/verticalBarLayout"
-            android:hint="put the text you want"
+            android:layout_toLeftOf="@+id/speaker"
+            android:hint="words you want to listen"
             android:textColor="@android:color/white"
             android:textColorHint="@android:color/darker_gray"
             android:gravity="center"
@@ -55,13 +56,22 @@
             android:textColorHighlight="#ff0099cc"
             android:id="@+id/editText"/>
 
+        <ImageView
+            android:id="@+id/speaker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:src="@drawable/ic_volume_up_white_36dp"
+            android:layout_toLeftOf="@+id/verticalBarLayout"/>
+
         <Button
             android:id="@+id/mic"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:layout_margin="10dp"
             android:layout_width="100dp"
-            android:layout_height="100dp"/>
+            android:layout_height="100dp"
+            android:background="@drawable/ic_mic_white_48dp"/>
 
 
         <RelativeLayout

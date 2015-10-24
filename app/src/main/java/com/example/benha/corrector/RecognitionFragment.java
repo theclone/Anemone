@@ -5,7 +5,9 @@ import android.os.Bundle;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
+import android.speech.tts.TextToSpeech;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -15,8 +17,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 /**
  * Created by Stefano on 10/24/2015.
@@ -30,6 +34,8 @@ public class RecognitionFragment extends Fragment implements RecognitionListener
     SpeechRecognizer speechRecognizer;
     Intent recognizerIntent;
     String speechResult;
+    ImageView speaker;
+    TextToSpeech tts;
 
     public static RecognitionFragment newInstance() {
         if (recognitionFragment == null) {
@@ -52,7 +58,15 @@ public class RecognitionFragment extends Fragment implements RecognitionListener
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         speechRecognizer = SpeechRecognizer.createSpeechRecognizer(getActivity());
+        tts = new TextToSpeech(getActivity(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+            }
+        });
+        tts.setLanguage(Locale.US);
+
         recognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        recognizerIntent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 5);
         //recognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, "en-US");
 
         editText = (EditText) view.findViewById(R.id.editText);
@@ -62,32 +76,48 @@ public class RecognitionFragment extends Fragment implements RecognitionListener
         verticalBarFront = (ImageView) view.findViewById(R.id.verticalBarFront);
         verticalBarBack = (ImageView) view.findViewById(R.id.verticalBarBack);
         verticalBarScore = (TextView) view.findViewById(R.id.verticalBarScore);
+        speaker = (ImageView) view.findViewById(R.id.speaker);
 
         verticalBarFront.setVisibility(View.GONE);
         verticalBarBack.setVisibility(View.GONE);
         speakNow.setVisibility(View.GONE);
         editText.setVisibility(View.GONE);
         resultTextView.setVisibility(View.GONE);
+        verticalBarScore.setVisibility(View.GONE);
+        speaker.setVisibility(View.GONE);
 
 
+        speaker.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!TextUtils.isEmpty(editText.getText().toString()))
+                    tts.speak(editText.getText().toString(), TextToSpeech.QUEUE_FLUSH, null);
+                else
+                    Toast.makeText(getActivity(), "Insert the word to listen", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        resultTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                tts.speak(resultTextView.getText().toString(), TextToSpeech.QUEUE_FLUSH, null);
+            }
+        });
         microphone.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()){
+                switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-                        if(SpeechRecognizer.isRecognitionAvailable(getActivity())){
+                        if (SpeechRecognizer.isRecognitionAvailable(getActivity())) {
                             Log.d("Tag", "start listening");
                             speechRecognizer.setRecognitionListener(RecognitionFragment.this);
                             speechRecognizer.startListening(recognizerIntent);
-                        };
-                        changeBarHeight(0.7f);
-                        changeLayout(false);
+                        }
                         break;
                     case MotionEvent.ACTION_UP:
-                        if(SpeechRecognizer.isRecognitionAvailable(getActivity())){
+                        if (SpeechRecognizer.isRecognitionAvailable(getActivity())) {
                             speechRecognizer.stopListening();
                         }
-                        changeLayout(true);
                         break;
                 }
                 return false;
@@ -103,6 +133,8 @@ public class RecognitionFragment extends Fragment implements RecognitionListener
             editText.setVisibility(View.VISIBLE);
             resultTextView.setVisibility(View.VISIBLE);
             verticalBarScore.setVisibility(View.VISIBLE);
+            verticalBarScore.setVisibility(View.VISIBLE);
+            speaker.setVisibility(View.VISIBLE);
         }
         else{
             verticalBarFront.setVisibility(View.GONE);
@@ -111,6 +143,8 @@ public class RecognitionFragment extends Fragment implements RecognitionListener
             editText.setVisibility(View.GONE);
             resultTextView.setVisibility(View.GONE);
             verticalBarScore.setVisibility(View.GONE);
+            verticalBarScore.setVisibility(View.GONE);
+            speaker.setVisibility(View.GONE);
         }
     }
 
@@ -128,6 +162,7 @@ public class RecognitionFragment extends Fragment implements RecognitionListener
     @Override
     public void onReadyForSpeech(Bundle params) {
         Log.d("TAG", "on ready");
+        changeLayout(false);
     }
 
     @Override
@@ -171,6 +206,9 @@ public class RecognitionFragment extends Fragment implements RecognitionListener
                 break;
             case SpeechRecognizer.ERROR_NO_MATCH:
                 Log.d("error", "error ERROR_NO_MATCH");
+                resultTextView.setText("no match, sorry");
+                changeBarHeight(0);
+                changeLayout(true);
                 break;
             case SpeechRecognizer.ERROR_RECOGNIZER_BUSY:
                 Log.d("error", "error ERROR_RECOGNIZER_BUSY");
@@ -180,6 +218,9 @@ public class RecognitionFragment extends Fragment implements RecognitionListener
                 break;
             case SpeechRecognizer.ERROR_SPEECH_TIMEOUT:
                 Log.d("error", "error ERROR_SPEECH_TIMEOUT");
+                resultTextView.setText("no match, sorry");
+                changeBarHeight(0);
+                changeLayout(true);
                 break;
         }
     }
@@ -187,6 +228,8 @@ public class RecognitionFragment extends Fragment implements RecognitionListener
     @Override
     public void onResults(Bundle results) {
         ArrayList<String> strings = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
+        float[] confidence = results.getFloatArray(SpeechRecognizer.CONFIDENCE_SCORES);
+
         speechResult = "";
         speechResult = strings.get(0);
         /*
@@ -195,8 +238,9 @@ public class RecognitionFragment extends Fragment implements RecognitionListener
         }*/
         speechResult = speechResult.trim();
         resultTextView.setText(speechResult);
+        changeBarHeight(confidence[0]);
         Log.d("TAG", "on result");
-
+        changeLayout(true);
     }
 
     @Override
