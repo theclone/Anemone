@@ -31,6 +31,7 @@ public class RecognitionActivity extends AppCompatActivity implements OnDolbyAud
             ft.replace(R.id.recognition_container, recognitionFragment);
             ft.commit();
         }
+        dolbyAudioProcessing = DolbyAudioProcessing.getDolbyAudioProcessing(getApplicationContext(), DolbyAudioProcessing.PROFILE.VOICE, this);
     }
 
     @Override
