@@ -2,8 +2,8 @@ package com.example.benha.corrector;
 
 import java.util.ArrayList;
 
-public class VocabList {
+public class VocabEntry {
 
-    ArrayList<String> words;
+
 
 }
