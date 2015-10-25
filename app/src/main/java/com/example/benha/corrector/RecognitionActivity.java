@@ -21,7 +21,6 @@ public class RecognitionActivity extends AppCompatActivity implements OnDolbyAud
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ToSpeech.init(this.getApplicationContext());
         setContentView(R.layout.activity_main);
         if (recognitionFragment == null) {
             recognitionFragment = RecognitionFragment.newInstance();
