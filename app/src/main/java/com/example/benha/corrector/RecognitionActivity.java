@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.dolby.dap.DolbyAudioProcessing;
 import com.dolby.dap.OnDolbyAudioProcessingEventListener;
@@ -30,8 +31,6 @@ public class RecognitionActivity extends AppCompatActivity implements OnDolbyAud
             ft.replace(R.id.recognition_container, recognitionFragment);
             ft.commit();
         }
-
-        dolbyAudioProcessing = DolbyAudioProcessing.getDolbyAudioProcessing(getApplicationContext(), DolbyAudioProcessing.PROFILE.VOICE, this);
     }
 
     @Override
@@ -53,7 +52,8 @@ public class RecognitionActivity extends AppCompatActivity implements OnDolbyAud
     @Override
     public void onDestroy(){
         super.onDestroy();
-        dolbyAudioProcessing.release();
+        if(dolbyAudioProcessing != null)
+            dolbyAudioProcessing.release();
     }
 
     @Override

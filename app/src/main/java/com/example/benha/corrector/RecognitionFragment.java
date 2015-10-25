@@ -19,9 +19,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.dolby.dap.DolbyAudioProcessing;
-import com.dolby.dap.OnDolbyAudioProcessingEventListener;
-
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -242,11 +239,15 @@ public class RecognitionFragment extends Fragment implements RecognitionListener
     public void onResults(Bundle results) {
         ArrayList<String> strings = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
         float[] confidence = results.getFloatArray(SpeechRecognizer.CONFIDENCE_SCORES);
-        speechResult = "";
-        speechResult = strings.get(0);
-        speechResult = speechResult.trim();
-        resultTextView.setText(speechResult);
-        changeBarHeight(confidence[0]);
+        if (strings != null) {
+            speechResult = "";
+            speechResult = strings.get(0);
+            speechResult = speechResult.trim();
+            resultTextView.setText(speechResult);
+            if (confidence != null) {
+                changeBarHeight(confidence[0]);
+            }
+        }
         Log.d("TAG", "on result");
         changeLayout(true);
         tts.speak(speechResult, TextToSpeech.QUEUE_FLUSH, null);
