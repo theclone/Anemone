@@ -19,6 +19,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.dolby.dap.DolbyAudioProcessing;
+import com.dolby.dap.OnDolbyAudioProcessingEventListener;
+
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -66,8 +69,7 @@ public class RecognitionFragment extends Fragment implements RecognitionListener
         tts.setLanguage(Locale.US);
 
         recognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        recognizerIntent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 5);
-        //recognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, "en-US");
+        recognizerIntent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1);
 
         editText = (EditText) view.findViewById(R.id.editText);
         speakNow = (TextView) view.findViewById(R.id.speakNow);
@@ -80,17 +82,18 @@ public class RecognitionFragment extends Fragment implements RecognitionListener
 
         verticalBarFront.setVisibility(View.GONE);
         verticalBarBack.setVisibility(View.GONE);
-        speakNow.setVisibility(View.GONE);
-        editText.setVisibility(View.GONE);
+        editText.setVisibility(View.VISIBLE);
         resultTextView.setVisibility(View.GONE);
         verticalBarScore.setVisibility(View.GONE);
-        speaker.setVisibility(View.GONE);
+        speaker.setVisibility(View.VISIBLE);
+        speakNow.setText("Click on the microphone and speak or write the sentence you want to hear");
+        speakNow.setVisibility(View.VISIBLE);
 
 
         speaker.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!TextUtils.isEmpty(editText.getText().toString()))
+                if (!TextUtils.isEmpty(editText.getText().toString()))
                     tts.speak(editText.getText().toString(), TextToSpeech.QUEUE_FLUSH, null);
                 else
                     Toast.makeText(getActivity(), "Insert the word to listen", Toast.LENGTH_SHORT).show();
@@ -101,6 +104,14 @@ public class RecognitionFragment extends Fragment implements RecognitionListener
             @Override
             public void onClick(View v) {
                 tts.speak(resultTextView.getText().toString(), TextToSpeech.QUEUE_FLUSH, null);
+            }
+        });
+
+        resultTextView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                editText.setText(resultTextView.getText());
+                return true;
             }
         });
         microphone.setOnTouchListener(new View.OnTouchListener() {
@@ -126,6 +137,7 @@ public class RecognitionFragment extends Fragment implements RecognitionListener
     }
 
     private void changeLayout(boolean showResult){
+        speakNow.setText("Speak now");
         if(showResult){
             verticalBarFront.setVisibility(View.VISIBLE);
             verticalBarBack.setVisibility(View.VISIBLE);
@@ -150,8 +162,7 @@ public class RecognitionFragment extends Fragment implements RecognitionListener
 
     private void changeBarHeight(float result) {
         int score = Math.round(result * 100);
-        verticalBarScore.setText( score + "")
-        ;
+        verticalBarScore.setText(score + "%");
         int height = verticalBarBack.getLayoutParams().height;
         height *= result;
         verticalBarFront.getLayoutParams().height = height;
@@ -183,6 +194,8 @@ public class RecognitionFragment extends Fragment implements RecognitionListener
     @Override
     public void onEndOfSpeech() {
         Log.d("TAG", "on endofspeech");
+        resultTextView.setText("Processing...");
+        resultTextView.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -228,17 +241,15 @@ public class RecognitionFragment extends Fragment implements RecognitionListener
     @Override
     public void onResults(Bundle results) {
         ArrayList<String> strings = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
+        float[] confidence = results.getFloatArray(SpeechRecognizer.CONFIDENCE_SCORES);
         speechResult = "";
         speechResult = strings.get(0);
-        /*
-        for(String s : strings) {
-            speechResult = speechResult + s + " ";
-        }*/
         speechResult = speechResult.trim();
         resultTextView.setText(speechResult);
         changeBarHeight(confidence[0]);
         Log.d("TAG", "on result");
         changeLayout(true);
+        tts.speak(speechResult, TextToSpeech.QUEUE_FLUSH, null);
     }
 
     @Override
