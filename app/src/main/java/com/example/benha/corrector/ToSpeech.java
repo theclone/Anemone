@@ -6,6 +6,7 @@ import android.speech.tts.UtteranceProgressListener;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import com.dolby.dap.*;
 
@@ -31,21 +32,24 @@ public class ToSpeech extends TextToSpeech implements OnDolbyAudioProcessingEven
         instance = new ToSpeech(context);
         try {
             dap = DolbyAudioProcessing.getDolbyAudioProcessing(context, DolbyAudioProcessing.PROFILE.VOICE, instance);
-            dap.setEnabled(true);
+            if (dap != null)
+                dap.setEnabled(true);
         } catch (UnsupportedOperationException e) {
-
+            Log.e("dolby-audio","api not supported");
         }
+        instance.setLanguage(Locale.US);
     }
 
     public static void release() {
         instance = null;
-        dap.release();
+        if (dap != null)
+            dap.release();
     }
 
     // loops through the toSpeak queue, speaking each String with a delay in milliseconds
     public void speak(final int queueDelay) {
-        for (String word: toSpeak) {
-            speak(word.trim(), QUEUE_ADD, null);
+        for (final String word: toSpeak) {
+            speak(word.trim(), QUEUE_FLUSH, null);
             UtteranceProgressListener listener = new UtteranceProgressListener() {
                 @Override
                 public void onStart(String utteranceId) {
@@ -55,7 +59,6 @@ public class ToSpeech extends TextToSpeech implements OnDolbyAudioProcessingEven
                 @Override
                 public void onDone(String utteranceId) {
                     Log.d("toSpeak","Done");
-                    toSpeak.remove(0);
                     if (queueDelay > 0) {
                         try {
                             Thread.sleep(queueDelay);
@@ -63,6 +66,7 @@ public class ToSpeech extends TextToSpeech implements OnDolbyAudioProcessingEven
                             // carry on
                         }
                     }
+                    toSpeak.remove(word);
                 }
 
                 @Override

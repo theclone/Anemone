@@ -38,4 +38,12 @@ public class MenuActivity extends AppCompatActivity {
         Button cards = (Button) findViewById(R.id.button3);
     }
 
+    public void saveData() {
+
+    }
+
+    public void loadData() {
+
+    }
+
 }
