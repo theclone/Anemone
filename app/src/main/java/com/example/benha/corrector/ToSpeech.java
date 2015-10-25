@@ -33,13 +33,14 @@ public class ToSpeech extends TextToSpeech implements OnDolbyAudioProcessingEven
             dap = DolbyAudioProcessing.getDolbyAudioProcessing(context, DolbyAudioProcessing.PROFILE.VOICE, instance);
             dap.setEnabled(true);
         } catch (UnsupportedOperationException e) {
-
+            Log.e("dolby-audio","api not supported");
         }
     }
 
     public static void release() {
         instance = null;
-        dap.release();
+        if (dap != null)
+            dap.release();
     }
 
     // loops through the toSpeak queue, speaking each String with a delay in milliseconds
