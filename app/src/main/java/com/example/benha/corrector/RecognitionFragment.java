@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.dolby.dap.DolbyAudioProcessing;
 import com.dolby.dap.OnDolbyAudioProcessingEventListener;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -162,7 +163,8 @@ public class RecognitionFragment extends Fragment implements RecognitionListener
 
     private void changeBarHeight(float result) {
         int score = Math.round(result * 100);
-        verticalBarScore.setText(score + "%");
+        DecimalFormat df = new DecimalFormat("00");
+        verticalBarScore.setText(df.format(score) + "%");
         int height = verticalBarBack.getLayoutParams().height;
         height *= result;
         verticalBarFront.getLayoutParams().height = height;
