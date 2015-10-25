@@ -15,7 +15,7 @@ public class MenuActivity extends AppCompatActivity {
         setContentView(R.layout.activity_menu);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        setTitle("Castigo");
+        setTitle("Anemone");
 
         Button pronunciation = (Button) findViewById(R.id.button);
         final Intent intent1 = new Intent(this,RecognitionActivity.class);
