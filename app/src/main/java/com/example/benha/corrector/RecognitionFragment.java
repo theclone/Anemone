@@ -95,6 +95,7 @@ public class RecognitionFragment extends Fragment implements RecognitionListener
             @Override
             public void onClick(View v) {
                 ToSpeech.getInstance().toSpeak.add(resultTextView.getText().toString());
+                ToSpeech.getInstance().speak(0);
             }
         });
 
